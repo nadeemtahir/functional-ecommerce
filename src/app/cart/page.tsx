@@ -12,6 +12,7 @@ import Footer from "../components/footer";
 import { FaTrash } from "react-icons/fa";
 import Navbar2 from "../components/navbar2";
 import Footer2 from "../components/footer2";
+import Link from "next/link";
 
 const Cart = () => {
   const products = useAppSelector((state) => state.cartReducer);
@@ -136,9 +137,11 @@ const Cart = () => {
           </p>
 
           {/* Checkout Button */}
+          <Link href={"/shipengine"}>
           <button className="w-[172px] h-[56px] bg-[#2A254B] text-white rounded-md hover:bg-[#1f1b3a] transition-colors">
             Go to Checkout
           </button>
+          </Link>
         </div>
       </div>
       <Footer2 />
