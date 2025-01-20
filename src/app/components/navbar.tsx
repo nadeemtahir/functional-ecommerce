@@ -1,12 +1,12 @@
 "use client";
 import Link from "next/link";
-import { IoSearch, IoClose } from "react-icons/io5"; // Import IoClose for close icon
+import { IoSearch, IoClose, IoHeartOutline, IoHeart } from "react-icons/io5"; // Import icons
 import { MdOutlineShoppingCart } from "react-icons/md";
 import { CgProfile } from "react-icons/cg";
 import { MdMenu } from "react-icons/md"; // Hamburger Menu
 import { useState } from "react"; // Import useState hook
 import { motion } from "framer-motion"; // Import motion from framer-motion
-import { useSelector } from "react-redux"; // Redux selector for cart state
+import { useSelector } from "react-redux"; // Redux selector for cart and wishlist state
 import { RootState } from "@/redux/store"; // Root state type for Redux
 
 // Define iconVariants for motion.div animations
@@ -18,6 +18,7 @@ const iconVariants = {
 interface HeaderProps {
   setShowCart: (show: boolean) => void; // Add setShowCart as a prop
 }
+
 const Header = ({ setShowCart }: HeaderProps) => {
   // State to control menu visibility
   const [menuOpen, setMenuOpen] = useState(false);
@@ -36,7 +37,10 @@ const Header = ({ setShowCart }: HeaderProps) => {
   };
 
   // Access cart count from Redux
-  const cartCount = useSelector((state: RootState) => (state.cartReducer as any[]).length);
+  const cartCount = useSelector((state: RootState) => state.cartReducer.length);
+
+  // Access wishlist count from Redux
+  const wishlistCount = useSelector((state: RootState) => state.wishlistReducer.items.length);
 
   // Navigation links for mobile and desktop
   const navLinks = [
@@ -95,7 +99,7 @@ const Header = ({ setShowCart }: HeaderProps) => {
           </div>
         </div>
 
-        {/* Cart and Profile Icons */}
+        {/* Cart, Wishlist, and Profile Icons */}
         <div className="flex text-xl gap-3 sm:gap-x-1">
           <div className="flex gap-6 text-[26px]">
             {/* Cart Icon with Redux Count */}
@@ -111,6 +115,29 @@ const Header = ({ setShowCart }: HeaderProps) => {
                   {cartCount > 0 && (
                     <div className="absolute top-[-15px] right-[-10px] bg-red-600 w-[25px] h-[25px] rounded-full text-white text-[14px] grid place-items-center">
                       {cartCount}
+                    </div>
+                  )}
+                </div>
+              </Link>
+            </motion.div>
+
+            {/* Wishlist Icon with Redux Count */}
+            <motion.div
+              className="relative cursor-pointer text-black"
+              variants={iconVariants}
+              whileHover="hover"
+              whileTap="tap"
+            >
+              <Link href={"/wishlist"}>
+                <div>
+                  {wishlistCount > 0 ? (
+                    <IoHeart className="text-red-500" />
+                  ) : (
+                    <IoHeartOutline />
+                  )}
+                  {wishlistCount > 0 && (
+                    <div className="absolute top-[-15px] right-[-10px] bg-red-600 w-[25px] h-[25px] rounded-full text-white text-[14px] grid place-items-center">
+                      {wishlistCount}
                     </div>
                   )}
                 </div>

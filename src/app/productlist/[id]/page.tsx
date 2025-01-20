@@ -9,10 +9,13 @@ import Navbar2 from "@/app/components/navbar2";
 import Brand from "@/app/components/brand";
 import Club from "@/app/components/club";
 import Footer2 from "@/app/components/footer2";
-import { Input } from "@/components/ui/input"; // Assuming you're using a custom Input component
-import { Button } from "@/components/ui/button"; // Assuming you're using a custom Button component
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { addToCart } from "@/redux/features/cartSlice";
 import { useDispatch } from "react-redux";
+import { addToWishlist } from "@/redux/features/wishListSlice";
+import { IoHeartOutline } from "react-icons/io5";
+import { FaShoppingBasket } from "react-icons/fa";
 
 // Image URL Builder
 const builder = imageUrlBuilder(client);
@@ -21,13 +24,13 @@ function urlFor(source: any) {
 }
 
 interface Dimensions {
-  height?: number;
-  width?: number;
-  depth?: number;
+  height?: string;
+  width?: string;
+  depth?: string;
 }
 
 interface Review {
-  name: string; // Add name property
+  name: string;
   text: string;
   rating: number;
 }
@@ -40,25 +43,45 @@ interface Product {
   image: any;
   features?: string[];
   dimensions?: Dimensions;
+  quantity?: number;
+  tags?: string[];
+  category?: {
+    _id: string;
+    name: string;
+  };
 }
 
 const ProductDetail = () => {
-  const { id } = useParams(); // Get the product ID from the URL
+  const { id } = useParams();
   const [productData, setProduct] = useState<Product | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [quantity, setQuantity] = useState(1); // Quantity state
-  const [comment, setComment] = useState(""); // Review input state
-  const [name, setName] = useState(""); // User name input state
-  const [rating, setRating] = useState(0); // Rating state
+  const [quantity, setQuantity] = useState(1);
+  const [comment, setComment] = useState("");
+  const [name, setName] = useState("");
+  const [rating, setRating] = useState(0);
   const [reviews, setReviews] = useState<Review[]>([]);
-  const dispatch = useDispatch() // Reviews list state
+  const dispatch = useDispatch();
 
   // Fetch product data
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const query = `*[_type == "product" && _id == $id][0]`;
+        const query = `*[_type == "product" && _id == $id][0]{
+          _id,
+          name,
+          price,
+          description,
+          image,
+          features,
+          dimensions,
+          quantity,
+          tags,
+          category->{
+            _id,
+            name
+          }
+        }`;
         const product = await client.fetch(query, { id });
 
         if (!product) {
@@ -153,22 +176,38 @@ const ProductDetail = () => {
       console.error("Product data is missing!");
       return;
     }
-  
+
     // Construct the product object to add to the cart
     const payload = {
       id: Number(productData._id),
       name: productData.name,
-      img: urlFor(productData.image).url(), // Ensure this generates a valid URL
+      img: urlFor(productData.image).url(),
       price: productData.price,
-      quantity: quantity, // Use the quantity state
+      quantity: quantity,
     };
 
     dispatch(addToCart(payload));
     alert("Item added to cart");
   };
 
+  // Add to Wishlist function
+  const addProductToWishlist = () => {
+    if (!productData) {
+      console.error("Product data is missing!");
+      return;
+    }
 
-   
+    // Construct the product object to add to the wishlist
+    const payload = {
+      id: productData._id,
+      name: productData.name,
+      price: productData.price,
+      image: productData.image,
+    };
+
+    dispatch(addToWishlist(payload));
+    alert("Item added to wishlist");
+  };
 
   if (loading) {
     return (
@@ -183,7 +222,9 @@ const ProductDetail = () => {
   }
 
   if (!productData) {
-    return <div className="text-center py-8 text-red-500">Product not found.</div>;
+    return (
+      <div className="text-center py-8 text-red-500">Product not found.</div>
+    );
   }
 
   return (
@@ -199,7 +240,7 @@ const ProductDetail = () => {
             width={721}
             height={759}
             alt={productData.name}
-            priority // Improves loading for above-the-fold images
+            priority
           />
         </div>
 
@@ -218,7 +259,9 @@ const ProductDetail = () => {
 
             {/* Product Description */}
             <div className="space-y-4">
-              <h2 className="text-lg font-medium font-[Clash Display]">Description</h2>
+              <h2 className="text-lg font-medium font-[Clash Display]">
+                Description
+              </h2>
               <p className="text-sm sm:text-base font-[Satoshi] text-[#505977]">
                 {productData.description || "Product description goes here."}
               </p>
@@ -227,7 +270,9 @@ const ProductDetail = () => {
             {/* Product Features */}
             {productData.features && (
               <div className="space-y-4">
-                <h2 className="text-lg font-medium font-[Clash Display]">Features</h2>
+                <h2 className="text-lg font-medium font-[Clash Display]">
+                  Features
+                </h2>
                 <ul className="list-disc pl-5 text-sm sm:text-base font-[Satoshi] text-[#505977]">
                   {productData.features.map((feature, index) => (
                     <li key={index}>{feature}</li>
@@ -239,7 +284,9 @@ const ProductDetail = () => {
             {/* Dimensions */}
             {productData.dimensions && (
               <div className="mb-6">
-                <h2 className="text-lg font-medium font-[Clash Display]">Dimensions</h2>
+                <h2 className="text-lg font-medium font-[Clash Display]">
+                  Dimensions
+                </h2>
                 <div className="flex flex-wrap gap-4 mt-2">
                   {/* Height */}
                   <div>
@@ -263,6 +310,35 @@ const ProductDetail = () => {
                     </p>
                   </div>
                 </div>
+              </div>
+            )}
+
+            {/* Tags */}
+            {productData.tags && (
+              <div className="space-y-4">
+                <h2 className="text-lg font-medium font-[Clash Display]">Tags</h2>
+                <div className="flex flex-wrap gap-2">
+                  {productData.tags.map((tag, index) => (
+                    <span
+                      key={index}
+                      className="bg-gray-100 px-3 py-1 rounded-full text-sm text-[#505977]"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Category */}
+            {productData.category && (
+              <div className="space-y-4">
+                <h2 className="text-lg font-medium font-[Clash Display]">
+                  Category
+                </h2>
+                <p className="text-sm sm:text-base font-[Satoshi] text-[#505977]">
+                  {productData.category.name}
+                </p>
               </div>
             )}
           </div>
@@ -289,13 +365,26 @@ const ProductDetail = () => {
               </div>
             </div>
 
-            {/* Add to Cart Button (Right Side) */}
-            <button
-              onClick={addProductToCart} // Updated to use handleAddToCart
-              className="bg-[#2A254B] text-white px-6 py-3 rounded-md hover:bg-[#1f1b3a] transition-colors"
-            >
-              Add to Cart
-            </button>
+            {/* Add to Cart and Add to Wishlist Buttons (Right Side) */}
+            <div className="flex space-x-4">
+              {/* Add to Cart Button */}
+              <button
+                onClick={addProductToCart}
+                className="bg-[#2A254B] text-white px-4 py-2 rounded-md hover:bg-[#1f1b3a] transition-colors flex items-center space-x-2"
+              >
+                <FaShoppingBasket className="h-5 w-5" />
+                <span>Add to Cart</span>
+              </button>
+
+              {/* Add to Wishlist Button */}
+              <button
+                onClick={addProductToWishlist}
+                className="bg-[#2A254B] text-white px-4 py-2 rounded-md hover:bg-[#1f1b3a] transition-colors flex items-center space-x-2"
+              >
+                <IoHeartOutline className="h-5 w-5" />
+                <span>Add to Wishlist</span>
+              </button>
+            </div>
           </div>
 
           {/* Reviews Section */}
@@ -340,10 +429,15 @@ const ProductDetail = () => {
             <div className="mt-5">
               <h1 className="font-semibold text-xl">Customer Reviews</h1>
               {reviews.length === 0 ? (
-                <p className="text-gray-500">No reviews yet. Be the first to review!</p>
+                <p className="text-gray-500">
+                  No reviews yet. Be the first to review!
+                </p>
               ) : (
                 reviews.map((review, index) => (
-                  <div key={index} className="mt-2 p-2 border rounded-md flex justify-between items-center">
+                  <div
+                    key={index}
+                    className="mt-2 p-2 border rounded-md flex justify-between items-center"
+                  >
                     <div>
                       <p className="text-lg font-semibold">{review.name}</p>
                       <p className="text-lg">{review.text}</p>
@@ -394,7 +488,10 @@ const RecommendedProducts = () => {
       </div>
       <div className="flex flex-wrap lg:flex-nowrap gap-4 sm:gap-8 justify-center p-6 sm:p-10">
         {recommendedImages.map((src, index) => (
-          <div key={index} className="w-full sm:w-1/2 lg:w-1/4 flex justify-center">
+          <div
+            key={index}
+            className="w-full sm:w-1/2 lg:w-1/4 flex justify-center"
+          >
             <div className="w-full h-[400px] bg-gray-100 flex items-center justify-center">
               <Image
                 src={src}
@@ -402,7 +499,7 @@ const RecommendedProducts = () => {
                 width={305}
                 height={462}
                 className="w-auto h-auto object-cover"
-                priority // Improves loading for above-the-fold images
+                priority
               />
             </div>
           </div>

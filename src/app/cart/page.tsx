@@ -10,6 +10,8 @@ import {
 } from "@/redux/features/cartSlice";
 import Footer from "../components/footer";
 import { FaTrash } from "react-icons/fa";
+import Navbar2 from "../components/navbar2";
+import Footer2 from "../components/footer2";
 
 const Cart = () => {
   const products = useAppSelector((state) => state.cartReducer);
@@ -45,6 +47,8 @@ const Cart = () => {
   }
 
   return (
+    <div>
+    <Navbar2/>
     <div className="min-h-screen bg-white">
       <div className="max-w-[1200px] mx-auto p-6">
         <h1 className="text-3xl font-bold font-[Clash Display] text-[#2A254B] mb-8">
@@ -137,7 +141,8 @@ const Cart = () => {
           </button>
         </div>
       </div>
-      <Footer />
+      <Footer2 />
+    </div>
     </div>
   );
 };
