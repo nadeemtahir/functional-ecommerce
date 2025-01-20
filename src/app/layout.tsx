@@ -4,6 +4,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import store from "@/redux/store";
 import { Provider } from "react-redux";
+import { SearchProvider } from "./components/SearchContext";
 
 // Load local fonts
 const geistSans = localFont({
@@ -30,7 +31,9 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {/* Wrap children with Redux Provider */}
+        <SearchProvider>
         <Provider store={store}>{children}</Provider>
+        </SearchProvider>
       </body>
     </html>
   );

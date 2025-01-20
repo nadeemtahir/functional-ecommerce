@@ -7,6 +7,7 @@ import Link from 'next/link';
 import Footer from '../components/footer';
 import Navbar from '../components/navbar';
 import imageUrlBuilder from '@sanity/image-url';
+import { IoSearch, IoClose } from 'react-icons/io5'; // Import search and close icons
 
 // Initialize the image URL builder
 const builder = imageUrlBuilder(client);
@@ -30,9 +31,13 @@ const Page = () => {
     image: { asset: { _ref: string } }; // Define the Sanity image object structure
   }
 
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<Product[]>([]); // State for fetched data
+  const [filteredProduct, setFilteredProducts] = useState<Product[]>([]); // State for filtered data
+  const [searchQuery, setSearchQuery] = useState<string>(""); // State for search query
   const [showCart, setShowCart] = useState(false); // Add state for cart visibility
+  const [isSearchFocused, setIsSearchFocused] = useState(false); // State for search bar focus
 
+  // Fetch products from Sanity
   useEffect(() => {
     const fetchProducts = async () => {
       const query = `*[_type == "product"] {
@@ -57,10 +62,33 @@ const Page = () => {
       }`;
       const result = await client.fetch(query);
       setProducts(result);
+      setFilteredProducts(result); // Initialize filtered products with all products
     };
 
     fetchProducts();
   }, []);
+
+  // Handle search input change
+  const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+
+    // Filter products based on search query
+    if (query) {
+      const filtered = products.filter((product) =>
+        product.name.toLowerCase().includes(query.toLowerCase())
+      );
+      setFilteredProducts(filtered);
+    } else {
+      setFilteredProducts(products); // Reset to all products if query is empty
+    }
+  };
+
+  // Clear search query
+  const clearSearchQuery = () => {
+    setSearchQuery("");
+    setFilteredProducts(products); // Reset to all products
+  };
 
   return (
     <div>
@@ -78,6 +106,39 @@ const Page = () => {
             alt="Header Image"
             className="w-full h-auto object-cover mt-3 sm:w-full"
           />
+        </div>
+
+        {/* Search Bar */}
+        <div className="flex justify-center my-4">
+          <div
+            className={`relative w-full max-w-md ${
+              isSearchFocused ? "border-blue-500" : "border-gray-300"
+            } border rounded-lg transition-all duration-200`}
+          >
+            <div className="flex items-center">
+              {/* Search Icon */}
+              <IoSearch className="text-gray-500 ml-3" size={20} />
+              {/* Search Input */}
+              <input
+                type="text"
+                placeholder="Search products..."
+                className="w-full p-2 focus:outline-none rounded-lg"
+                value={searchQuery}
+                onChange={handleSearchInputChange}
+                onFocus={() => setIsSearchFocused(true)}
+                onBlur={() => setIsSearchFocused(false)}
+              />
+              {/* Clear Button (Visible when search query is not empty) */}
+              {searchQuery && (
+                <button
+                  onClick={clearSearchQuery}
+                  className="p-2 text-gray-500 hover:text-gray-700 transition-colors"
+                >
+                  <IoClose size={20} />
+                </button>
+              )}
+            </div>
+          </div>
         </div>
 
         {/* Filters and Sorting */}
@@ -106,7 +167,7 @@ const Page = () => {
 
         {/* Product Cards Section */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-4 sm:px-10 md:px-20 py-8">
-          {products.map((product) => {
+          {filteredProduct.map((product) => {
             const imageUrl = product.image ? urlFor(product.image).url() : null;
 
             return (
