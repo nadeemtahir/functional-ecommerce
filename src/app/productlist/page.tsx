@@ -8,6 +8,17 @@ import Footer from '../components/footer';
 import Navbar from '../components/navbar';
 import imageUrlBuilder from '@sanity/image-url';
 import { IoSearch, IoClose } from 'react-icons/io5'; // Import search and close icons
+import { Button } from '@/components/ui/button'; // Import shadcn/ui Button
+import { Input } from '@/components/ui/input'; // Import shadcn/ui Input
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationPrevious,
+  PaginationNext,
+  PaginationLink,
+  PaginationEllipsis,
+} from '@/components/ui/pagination'; // Import shadcn Pagination components
 
 // Initialize the image URL builder
 const builder = imageUrlBuilder(client);
@@ -36,6 +47,10 @@ const Page = () => {
   const [searchQuery, setSearchQuery] = useState<string>(""); // State for search query
   const [showCart, setShowCart] = useState(false); // Add state for cart visibility
   const [isSearchFocused, setIsSearchFocused] = useState(false); // State for search bar focus
+
+  // Pagination States
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(8); // Number of items per page
 
   // Fetch products from Sanity
   useEffect(() => {
@@ -82,12 +97,25 @@ const Page = () => {
     } else {
       setFilteredProducts(products); // Reset to all products if query is empty
     }
+    setCurrentPage(1); // Reset to first page after search
   };
 
   // Clear search query
   const clearSearchQuery = () => {
     setSearchQuery("");
     setFilteredProducts(products); // Reset to all products
+    setCurrentPage(1); // Reset to first page after clear
+  };
+
+  // Pagination Logic
+  const totalPages = Math.ceil(filteredProduct.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const paginatedProducts = filteredProduct.slice(indexOfFirstItem, indexOfLastItem);
+
+  // Change Page
+  const handlePageChange = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
   };
 
   return (
@@ -119,10 +147,10 @@ const Page = () => {
               {/* Search Icon */}
               <IoSearch className="text-gray-500 ml-3" size={20} />
               {/* Search Input */}
-              <input
+              <Input
                 type="text"
                 placeholder="Search products..."
-                className="w-full p-2 focus:outline-none rounded-lg"
+                className="w-full p-2 focus:outline-none rounded-lg border-none"
                 value={searchQuery}
                 onChange={handleSearchInputChange}
                 onFocus={() => setIsSearchFocused(true)}
@@ -130,12 +158,14 @@ const Page = () => {
               />
               {/* Clear Button (Visible when search query is not empty) */}
               {searchQuery && (
-                <button
+                <Button
+                  variant="ghost"
+                  size="icon"
                   onClick={clearSearchQuery}
                   className="p-2 text-gray-500 hover:text-gray-700 transition-colors"
                 >
                   <IoClose size={20} />
-                </button>
+                </Button>
               )}
             </div>
           </div>
@@ -144,30 +174,20 @@ const Page = () => {
         {/* Filters and Sorting */}
         <div className="flex flex-wrap items-center justify-between px-4 sm:px-10 md:px-20 sm:col-auto py-4 p-3">
           <div className="flex flex-wrap gap-4 md:text-lg">
-            <button className="px-4 py-2 text-black bg-gray-200 rounded-md">
-              Category
-            </button>
-            <button className="px-4 py-2 text-black bg-gray-200 rounded-md">
-              Product type
-            </button>
-            <button className="px-4 py-2 text-black bg-gray-200 rounded-md">
-              Price
-            </button>
-            <button className="px-4 py-2 text-black bg-gray-200 rounded-md">
-              Brand
-            </button>
+            <Button variant="outline">Category</Button>
+            <Button variant="outline">Product type</Button>
+            <Button variant="outline">Price</Button>
+            <Button variant="outline">Brand</Button>
           </div>
           <div className="flex items-center gap-2 text-sm md:text-lg mt-4 md:mt-0">
             <span>Sorting by:</span>
-            <button className="px-4 py-2 text-black bg-gray-200 rounded-md">
-              Date added
-            </button>
+            <Button variant="outline">Date added</Button>
           </div>
         </div>
 
         {/* Product Cards Section */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-4 sm:px-10 md:px-20 py-8">
-          {filteredProduct.map((product) => {
+          {paginatedProducts.map((product) => {
             const imageUrl = product.image ? urlFor(product.image).url() : null;
 
             return (
@@ -195,11 +215,44 @@ const Page = () => {
           })}
         </div>
 
+        {/* Pagination */}
+        <div className="flex justify-center mt-8">
+          <Pagination>
+            <PaginationContent>
+              {/* Previous Button */}
+              <PaginationItem>
+                <PaginationPrevious
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
+                />
+              </PaginationItem>
+
+              {/* Page Numbers */}
+              {Array.from({ length: totalPages }, (_, index) => (
+                <PaginationItem key={index + 1}>
+                  <PaginationLink
+                    onClick={() => handlePageChange(index + 1)}
+                    isActive={currentPage === index + 1}
+                  >
+                    {index + 1}
+                  </PaginationLink>
+                </PaginationItem>
+              ))}
+
+              {/* Next Button */}
+              <PaginationItem>
+                <PaginationNext
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </div>
+
         {/* View Collection Button */}
         <div className="flex justify-center mt-4 py-4">
-          <button className="bg-[#F9F9F9] px-6 py-3 text-lg rounded hover:bg-gray-200">
-            View Collection
-          </button>
+          <Button variant="outline">View Collection</Button>
         </div>
       </div>
 
