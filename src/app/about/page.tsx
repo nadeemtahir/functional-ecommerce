@@ -7,7 +7,7 @@ import Footer from "../components/footer";
 const About = () => {
   return (
     <div>
-      <Navbar setShowCart={function (show: boolean): void {
+      <Navbar setShowCart={function (): void {
         throw new Error("Function not implemented.");
       } } />
 

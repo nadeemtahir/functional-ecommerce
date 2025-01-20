@@ -4,7 +4,6 @@ import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { client } from '@/sanity/lib/client';
 import Link from 'next/link';
-import Header from '../components/navbar';
 import Footer from '../components/footer';
 import Navbar from '../components/navbar';
 import imageUrlBuilder from '@sanity/image-url';
@@ -12,7 +11,7 @@ import imageUrlBuilder from '@sanity/image-url';
 // Initialize the image URL builder
 const builder = imageUrlBuilder(client);
 
-function urlFor(source: any) {
+function urlFor(source: { asset: { _ref: string } }) {
   return builder.image(source);
 }
 
@@ -28,7 +27,7 @@ const Page = () => {
     ratingCount: number;
     tags: string[];
     sizes: string[];
-    image: any; // Change this to match the Sanity image object structure
+    image: { asset: { _ref: string } }; // Define the Sanity image object structure
   }
 
   const [products, setProducts] = useState<Product[]>([]);

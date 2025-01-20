@@ -75,7 +75,7 @@ export const cartSlice = createSlice({
     },
 
     // Clear the entire cart
-    clearCart: (state) => {
+    clearCart: () => {
       saveCartToLocalStorage([]); // Clear cart in local storage
       return []; // Reset cart state
     },
