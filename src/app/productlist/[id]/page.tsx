@@ -5,7 +5,6 @@ import React, { useEffect, useState, ChangeEvent, FormEvent } from "react";
 import Image from "next/image";
 import imageUrlBuilder from "@sanity/image-url";
 import { client } from "@/sanity/lib/client";
-import Navbar2 from "@/app/components/navbar2";
 import Brand from "@/app/components/brand";
 import Club from "@/app/components/club";
 import Footer2 from "@/app/components/footer2";
@@ -16,6 +15,7 @@ import { useDispatch } from "react-redux";
 import { addToWishlist } from "@/redux/features/wishListSlice";
 import { IoHeartOutline } from "react-icons/io5";
 import { FaShoppingBasket } from "react-icons/fa";
+import Navbar from "@/app/components/navbar";
 
 // Image URL Builder
 const builder = imageUrlBuilder(client);
@@ -229,7 +229,9 @@ const ProductDetail = () => {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Navbar2 />
+      <Navbar setShowCart={function (): void {
+        throw new Error("Function not implemented.");
+      } } />
       {/* Product Details Section */}
       <div className="flex flex-col lg:flex-row flex-1">
         {/* Image Section */}

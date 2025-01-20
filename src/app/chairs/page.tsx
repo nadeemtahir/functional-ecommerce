@@ -3,8 +3,10 @@
 import React, { useEffect, useState } from "react";
 import { client } from "@/sanity/lib/client"; // Adjust the import path as needed
 import Image from "next/image";
-import Navbar2 from "../components/navbar2";
 import Footer2 from "../components/footer2";
+import { urlFor } from "@/sanity/lib/image";
+import Link from "next/link"; // Import the Link component
+import Navbar from "../components/navbar";
 
 interface Category {
   _id: string;
@@ -72,28 +74,32 @@ const ChairsPage = () => {
 
   return (
     <div>
-    <Navbar2/>
-    <div className="p-8">
-      <h1 className="text-3xl font-bold mb-6">{category.name}</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {category.products.map((product) => (
-          <div key={product._id} className="border p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-            <div className="relative w-full h-48 mb-4">
-              <Image
-                src={product.image.asset.url}
-                alt={product.name}
-                fill
-                className="object-cover rounded-lg"
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              />
-            </div>
-            <h3 className="text-lg font-semibold mb-2">{product.name}</h3>
-            <p className="text-gray-600">${product.price}</p>
-          </div>
-        ))}
+      <Navbar setShowCart={function (): void {
+        throw new Error("Function not implemented.");
+      } } />
+      <div className="p-8">
+        <h1 className="text-3xl font-bold mb-6">{category.name}</h1>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {category.products.map((product) => (
+            <Link key={product._id} href={`/productlist/${product._id}`}>
+              <div className="border p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                <div className="relative w-full h-48 mb-4">
+                  <Image
+                    src={urlFor(product.image).url()}
+                    alt={product.name}
+                    fill
+                    className="object-cover rounded-lg"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  />
+                </div>
+                <h3 className="text-lg font-semibold mb-2">{product.name}</h3>
+                <p className="text-gray-600">${product.price}</p>
+              </div>
+            </Link>
+          ))}
+        </div>
       </div>
-    </div>
-    <Footer2/>
+      <Footer2 />
     </div>
   );
 };
