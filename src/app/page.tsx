@@ -1,3 +1,4 @@
+"use client"
 import Brand from "./components/brand";
 import Ceramics from "./components/ceramics";
 import Club from "./components/club";
@@ -10,7 +11,9 @@ import Navbar from "./components/navbar";
 export default function Home() {
   return (
     <div>
-    <Navbar/>
+    <Navbar setShowCart={function (show: boolean): void {
+        throw new Error("Function not implemented.");
+      } }/>
     
     <Herosection/>
     <Brand/>

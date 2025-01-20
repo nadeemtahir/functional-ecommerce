@@ -1,4 +1,5 @@
-'use client';
+"use client"; // Mark this as a Client Component
+
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { client } from '@/sanity/lib/client';
@@ -31,6 +32,7 @@ const Page = () => {
   }
 
   const [products, setProducts] = useState<Product[]>([]);
+  const [showCart, setShowCart] = useState(false); // Add state for cart visibility
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -64,7 +66,7 @@ const Page = () => {
   return (
     <div>
       {/* Header Section */}
-      <Navbar />
+      <Navbar setShowCart={setShowCart} /> {/* Pass the actual setShowCart function */}
 
       {/* Main Section */}
       <div className="p-3">

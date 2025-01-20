@@ -1,3 +1,4 @@
+"use client"
 import React from "react";
 import Image from "next/image";
 import Navbar from "../components/navbar";
@@ -6,7 +7,9 @@ import Footer from "../components/footer";
 const About = () => {
   return (
     <div>
-      <Navbar />
+      <Navbar setShowCart={function (show: boolean): void {
+        throw new Error("Function not implemented.");
+      } } />
 
       {/* Hero Section */}
       <div className="w-full py-10 px-6 flex flex-col lg:flex-row items-center lg:items-start lg:justify-between">
