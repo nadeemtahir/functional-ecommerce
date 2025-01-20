@@ -45,12 +45,15 @@ const Header = ({ setShowCart }: HeaderProps) => {
   // Navigation links for mobile and desktop
   const navLinks = [
     { href: "/", label: "Home" },
+    { href: "/productlist", label: "Products" },
     { href: "/ceramics", label: "Ceramics" },
-    { href: "/product", label: "Popular" },
-    { href: "/about", label: "About" },
-    { href: "/crockery", label: "Crockery" },
-    { href: "/tableware", label: "Tableware" },
     { href: "/cutlery", label: "Cutlery" },
+    { href: "/about", label: "About" },
+    { href: "/crockory", label: "Crockory" },
+    { href: "/table", label: "Tables" },
+    { href: "/plants", label: "Plant Pots" },
+    { href: "/chairs", label: "Chairs" },
+    { href: "/tableware", label: "Tableware" },
   ];
 
   return (

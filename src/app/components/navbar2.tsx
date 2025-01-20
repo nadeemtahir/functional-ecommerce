@@ -102,23 +102,32 @@ const Header = () => {
           <Link className="cursor-pointer text-black hover:text-gray-700" href="/">
             Home
           </Link>
-          <Link className="cursor-pointer text-black hover:text-gray-700" href="/">
+          <Link className="cursor-pointer text-black hover:text-gray-700" href="/ceramics">
             Ceramics
           </Link>
-          <Link className="cursor-pointer text-black hover:text-gray-700" href="/product">
-           Popular
+          <Link className="cursor-pointer text-black hover:text-gray-700" href="/productlist">
+           Products
           </Link>
           <Link className="cursor-pointer text-black hover:text-gray-700" href="/about">
             About
           </Link>
-          <Link className="cursor-pointer text-black hover:text-gray-700" href="/">
-            Crockery
+          <Link className="cursor-pointer text-black hover:text-gray-700" href="/crockory">
+            Crockory
           </Link>
-          <Link className="cursor-pointer text-black hover:text-gray-700" href="/">
+          <Link className="cursor-pointer text-black hover:text-gray-700" href="/tableware">
             Table ware
           </Link>
-          <Link className="cursor-pointer text-black hover:text-gray-700" href="/">
+          <Link className="cursor-pointer text-black hover:text-gray-700" href="/cutlery">
              Cutlery
+          </Link>
+          <Link className="cursor-pointer text-black hover:text-gray-700" href="/chairs">
+             Chairs
+          </Link>
+          <Link className="cursor-pointer text-black hover:text-gray-700" href="/table">
+             Tables
+          </Link>
+          <Link className="cursor-pointer text-black hover:text-gray-700" href="/plants">
+             Plants Pots
           </Link>
           
         </ul>
