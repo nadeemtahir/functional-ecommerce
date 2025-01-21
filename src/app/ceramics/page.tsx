@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import { client } from "@/sanity/lib/client"; // Adjust the import path as needed
 import Image from "next/image";
 import Footer2 from "../components/footer2";
-import { urlFor } from "@/sanity/lib/image";
 import Link from "next/link"; // Import the Link component
 import Navbar from "../components/navbar";
 

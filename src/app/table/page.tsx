@@ -5,7 +5,6 @@ import { client } from "@/sanity/lib/client"; // Adjust the import path as neede
 import Image from "next/image";
 import Footer2 from "../components/footer2";
 import Navbar2 from "../components/navbar2";
-import { urlFor } from "@/sanity/lib/image";
 import Link from "next/link"; // Import the Link component
 import Navbar from "../components/navbar";
 
