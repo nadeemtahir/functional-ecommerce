@@ -21,11 +21,7 @@ interface Product {
   _id: string;
   name: string;
   price: number;
-  image: {
-    asset: {
-      url: string;
-    };
-  };
+  imageUrl:string
 }
 
 const ChairsPage = () => {
@@ -44,7 +40,7 @@ const ChairsPage = () => {
             _id,
             name,
             price,
-            image
+            "imageUrl": image.asset->url
           }
         }[0]`; // [0] ensures only the first matching category is returned
 
@@ -85,7 +81,7 @@ const ChairsPage = () => {
               <div className="border p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
                 <div className="relative w-full h-48 mb-4">
                   <Image
-                    src={urlFor(product.image).url()}
+                    src={product.imageUrl}
                     alt={product.name}
                     fill
                     className="object-cover rounded-lg"
