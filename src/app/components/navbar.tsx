@@ -57,38 +57,23 @@ const Header = ({ setShowCart }: HeaderProps) => {
   ];
 
   return (
-    <header className="max-w-[1440px] h-[132px] flex flex-col items-center bg-white px-10 lg:w-full mx-auto relative">
+    <header className="w-full h-auto flex flex-col items-center bg-white px-4 sm:px-6 lg:px-8 py-4 relative">
       {/* Top bar: Search, Logo, Cart/Profile */}
-      <div className="lg:flex hidden border-b-[0.5px] border-[#0000004f] h-1/2 w-full mx-auto justify-between items-center">
-        {/* Search Bar and Icon - Moved to the right */}
-        <div className="flex items-center gap-4">
-          {/* Logo - Always centered */}
-          <h1 className="text-[#22202E] text-2xl font-semibold absolute left-1/2 transform -translate-x-1/2">
-            Avion
-          </h1>
+      <div className="w-full flex justify-between items-center">
+        {/* Logo */}
+        <h1 className="text-[#22202E] text-2xl font-semibold">Avion</h1>
 
-          {/* Search Bar and Icon */}
-          <div className="flex items-center ml-auto">
-            {showSearchBar ? (
-              <div className="flex items-center gap-2">
-                <input
-                  type="text"
-                  placeholder="Search..."
-                  className="p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-all duration-300 ease-in-out"
-                  autoFocus
-                />
-                {/* Close Icon */}
-                <motion.div
-                  variants={iconVariants}
-                  whileHover="hover"
-                  whileTap="tap"
-                  onClick={toggleSearchBar}
-                  className="cursor-pointer"
-                >
-                  <IoClose className="text-xl" />
-                </motion.div>
-              </div>
-            ) : (
+        {/* Search Bar and Icon */}
+        <div className="flex items-center gap-4">
+          {showSearchBar ? (
+            <div className="flex items-center gap-2">
+              <input
+                type="text"
+                placeholder="Search..."
+                className="p-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 transition-all duration-300 ease-in-out"
+                autoFocus
+              />
+              {/* Close Icon */}
               <motion.div
                 variants={iconVariants}
                 whileHover="hover"
@@ -96,84 +81,79 @@ const Header = ({ setShowCart }: HeaderProps) => {
                 onClick={toggleSearchBar}
                 className="cursor-pointer"
               >
-                <IoSearch className="text-xl" />
+                <IoClose className="text-xl" />
               </motion.div>
-            )}
-          </div>
+            </div>
+          ) : (
+            <motion.div
+              variants={iconVariants}
+              whileHover="hover"
+              whileTap="tap"
+              onClick={toggleSearchBar}
+              className="cursor-pointer"
+            >
+              <IoSearch className="text-xl" />
+            </motion.div>
+          )}
         </div>
 
         {/* Cart, Wishlist, and Profile Icons */}
-        <div className="flex text-xl gap-3 sm:gap-x-1">
-          <div className="flex gap-6 text-[26px]">
-            {/* Cart Icon with Redux Count */}
-            <motion.div
-              className="relative cursor-pointer text-black"
-              variants={iconVariants}
-              whileHover="hover"
-              whileTap="tap"
-            >
-              <Link href={"/cart"}>
-                <div onClick={() => setShowCart(true)}>
-                  <MdOutlineShoppingCart />
-                  {cartCount > 0 && (
-                    <div className="absolute top-[-15px] right-[-10px] bg-red-600 w-[25px] h-[25px] rounded-full text-white text-[14px] grid place-items-center">
-                      {cartCount}
-                    </div>
-                  )}
-                </div>
-              </Link>
-            </motion.div>
-
-            {/* Wishlist Icon with Redux Count */}
-            <motion.div
-              className="relative cursor-pointer text-black"
-              variants={iconVariants}
-              whileHover="hover"
-              whileTap="tap"
-            >
-              <Link href={"/wishlist"}>
-                <div>
-                  {wishlistCount > 0 ? (
-                    <IoHeart className="text-red-500" />
-                  ) : (
-                    <IoHeartOutline />
-                  )}
-                  {wishlistCount > 0 && (
-                    <div className="absolute top-[-15px] right-[-10px] bg-red-600 w-[25px] h-[25px] rounded-full text-white text-[14px] grid place-items-center">
-                      {wishlistCount}
-                    </div>
-                  )}
-                </div>
-              </Link>
-            </motion.div>
-
-            {/* Profile Icon */}
-            <Link href="/">
-              <CgProfile />
+        <div className="flex items-center gap-4">
+          {/* Cart Icon with Redux Count */}
+          <motion.div
+            className="relative cursor-pointer text-black"
+            variants={iconVariants}
+            whileHover="hover"
+            whileTap="tap"
+          >
+            <Link href={"/cart"}>
+              <div onClick={() => setShowCart(true)}>
+                <MdOutlineShoppingCart className="text-2xl" />
+                {cartCount > 0 && (
+                  <div className="absolute top-[-10px] right-[-10px] bg-red-600 w-[20px] h-[20px] rounded-full text-white text-[12px] grid place-items-center">
+                    {cartCount}
+                  </div>
+                )}
+              </div>
             </Link>
-          </div>
-        </div>
-      </div>
+          </motion.div>
 
-      {/* Mobile Navbar - Only h1, Search Icon, and Hamburger */}
-      <div className="lg:hidden flex w-full justify-between items-center h-1/2">
-        <h1 className="text-[#22202E] text-2xl font-semibold">Avion</h1>
-        {/* Mobile Search Icon */}
-        <motion.div
-          variants={iconVariants}
-          whileHover="hover"
-          whileTap="tap"
-          onClick={toggleSearchBar}
-          className="cursor-pointer"
-        >
-          {showSearchBar ? <IoClose className="text-xl" /> : <IoSearch className="text-xl" />}
-        </motion.div>
-        <MdMenu className="text-2xl cursor-pointer" onClick={toggleMenu} />
+          {/* Wishlist Icon with Redux Count */}
+          <motion.div
+            className="relative cursor-pointer text-black"
+            variants={iconVariants}
+            whileHover="hover"
+            whileTap="tap"
+          >
+            <Link href={"/wishlist"}>
+              <div>
+                {wishlistCount > 0 ? (
+                  <IoHeart className="text-red-500 text-2xl" />
+                ) : (
+                  <IoHeartOutline className="text-2xl" />
+                )}
+                {wishlistCount > 0 && (
+                  <div className="absolute top-[-10px] right-[-10px] bg-red-600 w-[20px] h-[20px] rounded-full text-white text-[12px] grid place-items-center">
+                    {wishlistCount}
+                  </div>
+                )}
+              </div>
+            </Link>
+          </motion.div>
+
+          {/* Profile Icon */}
+          <Link href="/">
+            <CgProfile className="text-2xl" />
+          </Link>
+
+          {/* Hamburger Menu Icon for Mobile */}
+          <MdMenu className="text-2xl cursor-pointer lg:hidden" onClick={toggleMenu} />
+        </div>
       </div>
 
       {/* Mobile Search Bar */}
       {showSearchBar && (
-        <div className="lg:hidden w-full p-2">
+        <div className="w-full p-2 lg:hidden">
           <input
             type="text"
             placeholder="Search..."
@@ -185,7 +165,7 @@ const Header = ({ setShowCart }: HeaderProps) => {
 
       {/* Mobile Menu */}
       {menuOpen && (
-        <div className="absolute top-full left-0 w-full bg-white shadow-md rounded-lg p-4 mt-2 z-10">
+        <div className="absolute top-full left-0 w-full bg-white shadow-md rounded-lg p-4 mt-2 z-10 lg:hidden">
           {navLinks.map((link) => (
             <Link
               key={link.label}
@@ -206,7 +186,7 @@ const Header = ({ setShowCart }: HeaderProps) => {
       )}
 
       {/* Desktop Navigation Bar */}
-      <div className="lg:flex hidden sm:hidden w-full justify-center items-center h-1/2 text-[#726E8D]">
+      <div className="hidden lg:flex w-full justify-center items-center py-4">
         <nav className="flex gap-6 justify-center w-full">
           {navLinks.map((link) => (
             <Link

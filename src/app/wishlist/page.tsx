@@ -4,8 +4,8 @@ import Link from "next/link";
 import { removeFromWishlist } from "@/redux/features/wishListSlice";
 import { RootState } from "@/redux/store";
 import Image from "next/image";
-import Navbar2 from "../components/navbar2";
 import Footer2 from "../components/footer2";
+import Navbar from "../components/navbar";
 
 interface Product {
   id: string;
@@ -24,7 +24,9 @@ const WishlistPage = () => {
 
   return (
     <div>
-    <Navbar2/>
+    <Navbar setShowCart={function (): void {
+        throw new Error("Function not implemented.");
+      } }/>
     <div className="p-8">
         
       <h1 className="text-3xl font-bold mb-6">Your Wishlist</h1>

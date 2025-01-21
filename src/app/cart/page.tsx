@@ -8,11 +8,10 @@ import {
   decreaseQuantity,
   increaseQuantity,
 } from "@/redux/features/cartSlice";
-import Footer from "../components/footer";
 import { FaTrash } from "react-icons/fa";
-import Navbar2 from "../components/navbar2";
 import Footer2 from "../components/footer2";
 import Link from "next/link";
+import Navbar from "../components/navbar";
 
 const Cart = () => {
   const products = useAppSelector((state) => state.cartReducer);
@@ -49,7 +48,9 @@ const Cart = () => {
 
   return (
     <div>
-    <Navbar2/>
+    <Navbar setShowCart={function (): void {
+        throw new Error("Function not implemented.");
+      } }/>
     <div className="min-h-screen bg-white">
       <div className="max-w-[1200px] mx-auto p-6">
         <h1 className="text-3xl font-bold font-[Clash Display] text-[#2A254B] mb-8">
