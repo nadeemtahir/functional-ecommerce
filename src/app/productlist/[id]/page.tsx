@@ -196,13 +196,12 @@ const ProductDetail = () => {
       console.error("Product data is missing!");
       return;
     }
-
-    // Construct the product object to add to the wishlist
+    const imageUrl = urlFor(productData.image).url();
     const payload = {
       id: productData._id,
       name: productData.name,
       price: productData.price,
-      image: productData.image,
+      img: urlFor(productData.image).url(),
     };
 
     dispatch(addToWishlist(payload));
@@ -229,9 +228,11 @@ const ProductDetail = () => {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Navbar setShowCart={function (): void {
-        throw new Error("Function not implemented.");
-      } } />
+      <Navbar
+        setShowCart={function (): void {
+          throw new Error("Function not implemented.");
+        }}
+      />
       {/* Product Details Section */}
       <div className="flex flex-col lg:flex-row flex-1">
         {/* Image Section */}
@@ -346,8 +347,8 @@ const ProductDetail = () => {
           </div>
 
           {/* Quantity Selector and Add to Cart Button */}
-          <div className="mt-8 flex justify-between items-center">
-            {/* Quantity Selector (Left Side) */}
+          <div className="mt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+            {/* Quantity Selector */}
             <div className="flex items-center space-x-4">
               <span className="text-lg font-medium">Quantity:</span>
               <div className="flex items-center border rounded-md px-3 py-1 bg-[#F9F9F9]">
@@ -367,12 +368,12 @@ const ProductDetail = () => {
               </div>
             </div>
 
-            {/* Add to Cart and Add to Wishlist Buttons (Right Side) */}
-            <div className="flex space-x-4">
+            {/* Add to Cart and Add to Wishlist Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
               {/* Add to Cart Button */}
               <button
                 onClick={addProductToCart}
-                className="bg-[#2A254B] text-white px-4 py-2 rounded-md hover:bg-[#1f1b3a] transition-colors flex items-center space-x-2"
+                className="bg-[#2A254B] text-white px-4 py-2 rounded-md hover:bg-[#1f1b3a] transition-colors flex items-center justify-center space-x-2 w-full sm:w-auto"
               >
                 <FaShoppingBasket className="h-5 w-5" />
                 <span>Add to Cart</span>
@@ -381,7 +382,7 @@ const ProductDetail = () => {
               {/* Add to Wishlist Button */}
               <button
                 onClick={addProductToWishlist}
-                className="bg-[#2A254B] text-white px-4 py-2 rounded-md hover:bg-[#1f1b3a] transition-colors flex items-center space-x-2"
+                className="bg-[#2A254B] text-white px-4 py-2 rounded-md hover:bg-[#1f1b3a] transition-colors flex items-center justify-center space-x-2 w-full sm:w-auto"
               >
                 <IoHeartOutline className="h-5 w-5" />
                 <span>Add to Wishlist</span>

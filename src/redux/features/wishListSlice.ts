@@ -4,7 +4,7 @@ interface Product {
   id: string;
   name: string;
   price: number;
-  image: string;
+  img: string; // Ensure this matches the payload
 }
 
 interface WishlistState {
@@ -13,12 +13,10 @@ interface WishlistState {
 
 // Helper function to safely access localStorage
 const loadWishlistFromLocalStorage = (): WishlistState => {
-  // Check if window is defined (client-side)
   if (typeof window !== "undefined") {
     const wishlist = localStorage.getItem("wishlist");
     return wishlist ? JSON.parse(wishlist) : { items: [] };
   }
-  // Return default state if on the server
   return { items: [] };
 };
 
@@ -33,7 +31,6 @@ const wishlistSlice = createSlice({
       const existingProduct = state.items.find((item) => item.id === product.id);
       if (!existingProduct) {
         state.items.push(product);
-        // Save to local storage (client-side only)
         if (typeof window !== "undefined") {
           localStorage.setItem("wishlist", JSON.stringify(state));
         }
@@ -41,7 +38,6 @@ const wishlistSlice = createSlice({
     },
     removeFromWishlist: (state, action: PayloadAction<string>) => {
       state.items = state.items.filter((item) => item.id !== action.payload);
-      // Save to local storage (client-side only)
       if (typeof window !== "undefined") {
         localStorage.setItem("wishlist", JSON.stringify(state));
       }

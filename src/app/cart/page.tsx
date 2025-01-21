@@ -138,7 +138,7 @@ const Cart = () => {
           </p>
 
           {/* Checkout Button */}
-          <Link href={"/shipengine"}>
+          <Link href={"/shipping"}>
           <button className="w-[172px] h-[56px] bg-[#2A254B] text-white rounded-md hover:bg-[#1f1b3a] transition-colors">
             Go to Checkout
           </button>
