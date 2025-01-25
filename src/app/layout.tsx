@@ -5,6 +5,7 @@ import "./globals.css";
 import store from "@/redux/store";
 import { Provider } from "react-redux";
 import { SearchProvider } from "./components/SearchContext";
+import { ClerkProvider } from "@clerk/clerk-react";
 
 // Load local fonts
 const geistSans = localFont({
@@ -26,15 +27,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {/* Wrap children with Redux Provider */}
-        <SearchProvider>
-        <Provider store={store}>{children}</Provider>
-        </SearchProvider>
-      </body>
-    </html>
+    <ClerkProvider
+      publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY!} // Access the environment variable
+      routerPush={() => {}}
+      routerReplace={() => {}}
+    >
+      <html lang="en">
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        >
+          {/* Wrap children with Redux Provider */}
+          <SearchProvider>
+            <Provider store={store}>{children}</Provider>
+          </SearchProvider>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
