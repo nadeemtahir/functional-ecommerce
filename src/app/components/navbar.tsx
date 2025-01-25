@@ -2,12 +2,12 @@
 import Link from "next/link";
 import { IoSearch, IoClose, IoHeartOutline, IoHeart } from "react-icons/io5"; // Import icons
 import { MdOutlineShoppingCart } from "react-icons/md";
-import { CgProfile } from "react-icons/cg";
 import { MdMenu } from "react-icons/md"; // Hamburger Menu
 import { useState } from "react"; // Import useState hook
 import { motion } from "framer-motion"; // Import motion from framer-motion
 import { useSelector } from "react-redux"; // Redux selector for cart and wishlist state
 import { RootState } from "@/redux/store"; // Root state type for Redux
+import User from "./clerk"; // Import the User component
 
 // Define iconVariants for motion.div animations
 const iconVariants = {
@@ -37,10 +37,10 @@ const Header = ({ setShowCart }: HeaderProps) => {
   };
 
   // Access cart count from Redux
-  const cartCount = useSelector((state: RootState) => state.cartReducer.length);
+  const cartCount = useSelector((state: RootState) => state.cartReducer?.length || 0);
 
   // Access wishlist count from Redux
-  const wishlistCount = useSelector((state: RootState) => state.wishlistReducer.items.length);
+  const wishlistCount = useSelector((state: RootState) => state.wishlistReducer?.items?.length || 0);
 
   // Navigation links for mobile and desktop
   const navLinks = [
@@ -97,7 +97,7 @@ const Header = ({ setShowCart }: HeaderProps) => {
           )}
         </div>
 
-        {/* Cart, Wishlist, and Profile Icons */}
+        {/* Cart, Wishlist, Profile, and User Icons */}
         <div className="flex items-center gap-4">
           {/* Cart Icon with Redux Count */}
           <motion.div
@@ -141,10 +141,8 @@ const Header = ({ setShowCart }: HeaderProps) => {
             </Link>
           </motion.div>
 
-          {/* Profile Icon */}
-          <Link href="/">
-            <CgProfile className="text-2xl" />
-          </Link>
+          {/* User Component (Clerk Authentication) */}
+          <User />
 
           {/* Hamburger Menu Icon for Mobile */}
           <MdMenu className="text-2xl cursor-pointer lg:hidden" onClick={toggleMenu} />
