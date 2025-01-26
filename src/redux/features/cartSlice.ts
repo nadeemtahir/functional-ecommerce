@@ -11,8 +11,13 @@ interface IProduct {
 // Helper function to load cart items from local storage
 const loadCartFromLocalStorage = (): IProduct[] => {
   if (typeof window !== "undefined") {
-    const savedCart = localStorage.getItem("cart");
-    return savedCart ? JSON.parse(savedCart) : [];
+    try {
+      const savedCart = localStorage.getItem("cart");
+      return savedCart ? JSON.parse(savedCart) : [];
+    } catch (error) {
+      console.error("Error loading cart from localStorage:", error);
+      return [];
+    }
   }
   return [];
 };
@@ -20,7 +25,11 @@ const loadCartFromLocalStorage = (): IProduct[] => {
 // Helper function to save cart items to local storage
 const saveCartToLocalStorage = (cart: IProduct[]) => {
   if (typeof window !== "undefined") {
-    localStorage.setItem("cart", JSON.stringify(cart));
+    try {
+      localStorage.setItem("cart", JSON.stringify(cart));
+    } catch (error) {
+      console.error("Error saving cart to localStorage:", error);
+    }
   }
 };
 
@@ -33,50 +42,53 @@ export const cartSlice = createSlice({
   reducers: {
     // Add a product to the cart or increase its quantity if it already exists
     addToCart: (state, action: PayloadAction<IProduct>) => {
-      const productIndex = state.findIndex((pro) => pro.id === action.payload.id);
+      const productIndex = state.findIndex((product) => product.id === action.payload.id);
       if (productIndex === -1) {
-        state.push({ ...action.payload, quantity: 1 }); // Add new product with quantity 1
+        // Add new product with a default quantity of 1
+        state.push({ ...action.payload, quantity: 1 });
       } else {
-        state[productIndex].quantity += 1; // Increase quantity if product exists
+        // Increase the quantity if the product already exists
+        state[productIndex].quantity += 1;
       }
-      saveCartToLocalStorage(state); // Save updated cart to local storage
+      saveCartToLocalStorage(state); // Persist the updated cart to localStorage
     },
 
     // Remove a product from the cart by its ID
     removeFromCart: (state, action: PayloadAction<number>) => {
       const updatedCart = state.filter((item) => item.id !== action.payload);
-      saveCartToLocalStorage(updatedCart); // Save updated cart to local storage
+      saveCartToLocalStorage(updatedCart); // Persist the updated cart to localStorage
       return updatedCart; // Return the updated cart state
     },
 
     // Increase the quantity of a product by its ID
     increaseQuantity: (state, action: PayloadAction<number>) => {
-      const productIndex = state.findIndex((pro) => pro.id === action.payload);
+      const productIndex = state.findIndex((product) => product.id === action.payload);
       if (productIndex !== -1) {
-        state[productIndex].quantity += 1; // Increase quantity by 1
-        saveCartToLocalStorage(state); // Save updated cart to local storage
+        state[productIndex].quantity += 1;
+        saveCartToLocalStorage(state); // Persist the updated cart to localStorage
       }
     },
 
     // Decrease the quantity of a product by its ID
     decreaseQuantity: (state, action: PayloadAction<number>) => {
-      const productIndex = state.findIndex((pro) => pro.id === action.payload);
+      const productIndex = state.findIndex((product) => product.id === action.payload);
       if (productIndex !== -1) {
         if (state[productIndex].quantity > 1) {
-          state[productIndex].quantity -= 1; // Decrease quantity by 1 (if quantity > 1)
+          // Decrease the quantity if it's greater than 1
+          state[productIndex].quantity -= 1;
         } else {
-          // If quantity is 1, remove the product from the cart
+          // Remove the product from the cart if the quantity is 1
           const updatedCart = state.filter((item) => item.id !== action.payload);
-          saveCartToLocalStorage(updatedCart); // Save updated cart to local storage
-          return updatedCart;
+          saveCartToLocalStorage(updatedCart); // Persist the updated cart to localStorage
+          return updatedCart; // Return the updated cart state
         }
-        saveCartToLocalStorage(state); // Save updated cart to local storage
+        saveCartToLocalStorage(state); // Persist the updated cart to localStorage
       }
     },
 
     // Clear the entire cart
     clearCart: () => {
-      saveCartToLocalStorage([]); // Clear cart in local storage
+      saveCartToLocalStorage([]); // Clear cart in localStorage
       return []; // Reset cart state
     },
   },
