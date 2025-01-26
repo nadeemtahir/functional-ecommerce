@@ -11,7 +11,6 @@ interface WishlistState {
   items: Product[];
 }
 
-
 // Helper function to safely access localStorage
 const loadWishlistFromLocalStorage = (): WishlistState => {
   if (typeof window !== "undefined") {
@@ -35,9 +34,10 @@ const wishlistSlice = createSlice({
     addToWishlist: (state, action: PayloadAction<Product>) => {
       const product = action.payload;
 
-      // Ensure `items` is defined
-      if (!state.items) {
-        state.items = [];
+      // Ensure `items` is defined and is an array
+      if (!Array.isArray(state.items)) {
+        console.error("state.items is not an array:", state.items);
+        state.items = []; // Reset to an empty array if it's not an array
       }
 
       // Check if product already exists in wishlist
@@ -56,17 +56,20 @@ const wishlistSlice = createSlice({
       }
     },
     removeFromWishlist: (state, action: PayloadAction<string>) => {
-      // Ensure `items` is defined
-      if (state.items) {
-        state.items = state.items.filter((item) => item.id !== action.payload);
+      // Ensure `items` is defined and is an array
+      if (!Array.isArray(state.items)) {
+        console.error("state.items is not an array:", state.items);
+        state.items = []; // Reset to an empty array if it's not an array
+      }
 
-        // Update localStorage
-        if (typeof window !== "undefined") {
-          try {
-            localStorage.setItem("wishlist", JSON.stringify(state.items));
-          } catch (error) {
-            console.error("Failed to update wishlist in localStorage:", error);
-          }
+      state.items = state.items.filter((item) => item.id !== action.payload);
+
+      // Update localStorage
+      if (typeof window !== "undefined") {
+        try {
+          localStorage.setItem("wishlist", JSON.stringify(state.items));
+        } catch (error) {
+          console.error("Failed to update wishlist in localStorage:", error);
         }
       }
     },
@@ -79,17 +82,21 @@ const wishlistSlice = createSlice({
       // Add product to the cart
       dispatch({ type: "cart/addToCart", payload: product });
 
-      // Remove product from wishlist
-      if (state.items) {
-        state.items = state.items.filter((item) => item.id !== product.id);
+      // Ensure `items` is defined and is an array
+      if (!Array.isArray(state.items)) {
+        console.error("state.items is not an array:", state.items);
+        state.items = []; // Reset to an empty array if it's not an array
+      }
 
-        // Update localStorage
-        if (typeof window !== "undefined") {
-          try {
-            localStorage.setItem("wishlist", JSON.stringify(state.items));
-          } catch (error) {
-            console.error("Failed to update wishlist in localStorage:", error);
-          }
+      // Remove product from wishlist
+      state.items = state.items.filter((item) => item.id !== product.id);
+
+      // Update localStorage
+      if (typeof window !== "undefined") {
+        try {
+          localStorage.setItem("wishlist", JSON.stringify(state.items));
+        } catch (error) {
+          console.error("Failed to update wishlist in localStorage:", error);
         }
       }
     },
