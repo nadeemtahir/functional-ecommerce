@@ -190,7 +190,7 @@ const ProductDetail = () => {
     alert("Item added to cart");
   };
 
-   // Add to Wishlist function
+  // Add to Wishlist function
   const addProductToWishlist = () => {
     if (!productData) {
       console.error("Product data is missing!");
