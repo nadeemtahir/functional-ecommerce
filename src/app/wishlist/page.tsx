@@ -24,7 +24,7 @@ const WishlistPage = () => {
   };
 
   const handleMoveToCart = (product: Product) => {
-    dispatch(addToCart({ ...product, quantity: 1 })); // Add product to cart with initial quantity
+    dispatch(addToCart({ ...product, id: Number(product.id), quantity: 1 }));// Add product to cart with initial quantity
     dispatch(removeFromWishlist(product.id)); // Remove product from wishlist
   };
 
