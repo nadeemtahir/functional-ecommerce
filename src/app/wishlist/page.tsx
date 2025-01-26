@@ -15,6 +15,7 @@ interface Product {
   img: string;
 }
 
+
 const WishlistPage = () => {
   const dispatch = useDispatch();
   const wishlistItems = useSelector((state: RootState) => state.wishlistReducer.items || []);
@@ -27,6 +28,7 @@ const WishlistPage = () => {
     dispatch(addToCart({ ...product, id: Number(product.id), quantity: 1 }));// Add product to cart with initial quantity
     dispatch(removeFromWishlist(product.id)); // Remove product from wishlist
   };
+
 
   return (
     <div className="flex flex-col min-h-screen">
