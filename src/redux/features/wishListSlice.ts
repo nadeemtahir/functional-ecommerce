@@ -11,6 +11,7 @@ interface WishlistState {
   items: Product[];
 }
 
+
 // Helper function to safely access localStorage
 const loadWishlistFromLocalStorage = (): WishlistState => {
   if (typeof window !== "undefined") {
