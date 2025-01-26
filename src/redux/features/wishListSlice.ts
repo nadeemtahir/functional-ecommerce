@@ -4,7 +4,7 @@ interface Product {
   id: string;
   name: string;
   price: number;
-  img: string; // Ensure this matches the payload
+  img: string;
 }
 
 interface WishlistState {
@@ -14,8 +14,13 @@ interface WishlistState {
 // Helper function to safely access localStorage
 const loadWishlistFromLocalStorage = (): WishlistState => {
   if (typeof window !== "undefined") {
-    const wishlist = localStorage.getItem("wishlist");
-    return wishlist ? JSON.parse(wishlist) : { items: [] };
+    try {
+      const wishlist = localStorage.getItem("wishlist");
+      return wishlist ? { items: JSON.parse(wishlist) } : { items: [] };
+    } catch (error) {
+      console.error("Failed to parse wishlist from localStorage:", error);
+      return { items: [] };
+    }
   }
   return { items: [] };
 };
@@ -28,22 +33,42 @@ const wishlistSlice = createSlice({
   reducers: {
     addToWishlist: (state, action: PayloadAction<Product>) => {
       const product = action.payload;
+
+      // Ensure `items` is defined and perform the operation
+      if (!state.items) {
+        state.items = [];
+      }
       const existingProduct = state.items.find((item) => item.id === product.id);
       if (!existingProduct) {
         state.items.push(product);
         if (typeof window !== "undefined") {
-          localStorage.setItem("wishlist", JSON.stringify(state));
+          localStorage.setItem("wishlist", JSON.stringify(state.items));
         }
       }
     },
     removeFromWishlist: (state, action: PayloadAction<string>) => {
-      state.items = state.items.filter((item) => item.id !== action.payload);
+      // Ensure `items` is defined and perform the operation
+      if (state.items) {
+        state.items = state.items.filter((item) => item.id !== action.payload);
+        if (typeof window !== "undefined") {
+          localStorage.setItem("wishlist", JSON.stringify(state.items));
+        }
+      }
+    },
+    moveToCart: (state, action: PayloadAction<{ product: Product; dispatch: Function }>) => {
+      const { product, dispatch } = action.payload;
+
+      // Add product to the cart
+      dispatch({ type: "cart/addToCart", payload: product });
+
+      // Remove product from wishlist
+      state.items = state.items.filter((item) => item.id !== product.id);
       if (typeof window !== "undefined") {
-        localStorage.setItem("wishlist", JSON.stringify(state));
+        localStorage.setItem("wishlist", JSON.stringify(state.items));
       }
     },
   },
 });
 
-export const { addToWishlist, removeFromWishlist } = wishlistSlice.actions;
+export const { addToWishlist, removeFromWishlist, moveToCart } = wishlistSlice.actions;
 export default wishlistSlice.reducer;
