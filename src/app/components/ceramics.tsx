@@ -1,115 +1,107 @@
-import Image from "next/image"
+"use client"; // Required for Next.js client-side components
 
+import React, { useEffect, useState } from "react";
+import { client } from "@/sanity/lib/client"; // Adjust the import path as needed
+import Image from "next/image";
+import Link from "next/link"; // Import the Link component
 
-const Ceremics = () => {
-    return (
-         
-      <div className="p-10 w-full pr-4">
-        {/* Heading */}
-        <div className="p-6 sm:p-10">
+interface Category {
+  _id: string;
+  name: string;
+  slug: {
+    current: string;
+  };
+  products: Product[];
+}
+
+interface Product {
+  _id: string;
+  name: string;
+  price: number;
+  imageUrl: string;
+}
+
+const ChairsPage = () => {
+  const [category, setCategory] = useState<Category | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchChairsCategory = async () => {
+      try {
+        const query = `*[_type == "category" && name == "Chairs"] {
+          _id,
+          name,
+          slug,
+          "products": *[_type == "product" && references(^._id)] {
+            _id,
+            name,
+            price,
+            "imageUrl": image.asset->url
+          }
+        }[0]`; // [0] ensures only the first matching category is returned
+
+        const chairsCategory = await client.fetch(query);
+        setCategory(chairsCategory);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to fetch data");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchChairsCategory();
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
+  if (!category) {
+    return <div>No data found for Chairs category.</div>;
+  }
+
+  return (
+    <div className="p-10 w-full pr-4">
+      {/* Heading */}
+      <div className="p-6 sm:p-10">
         <h1 className="text-start py-6 sm:py-10 mt-8 sm:mt-14 text-2xl sm:text-3xl text-[#2A254B]">
-          New ceramics
+          New Ceramics
         </h1>
       </div>
+
       {/* Images */}
-      <div className="flex flex-wrap lg:flex-nowrap gap-4 sm:gap-8 justify-center p-6 sm:p-10">
-        <div className="w-full sm:w-1/2 lg:w-1/4 flex justify-center">
-          <Image
-            src="/images/parent.png"
-            alt="not found"
-            width={305}
-            height={462}
-            className="w-auto h-auto"
-          />
-        </div>
-        <div className="w-full sm:w-1/2 lg:w-1/4 flex justify-center">
-          <Image
-            src="/images/parent1.png"
-            alt="not found"
-            width={305}
-            height={462}
-            className="w-auto h-auto"
-          />
-        </div>
-        <div className="w-full sm:w-1/2 lg:w-1/4 flex justify-center">
-          <Image
-            src="/images/parent2.png"
-            alt="not found"
-            width={305}
-            height={462}
-            className="w-auto h-auto"
-          />
-        </div>
-        <div className="w-full sm:w-1/2 lg:w-1/4 flex justify-center">
-          <Image
-            src="/images/parent3.png"
-            alt="not found"
-            width={305}
-            height={462}
-            className="w-auto h-auto"
-          />
-        </div>
+      <div className="flex flex-wrap lg:flex-nowrap gap-6 sm:gap-8 justify-center p-6 sm:p-10">
+        {category.products.map((product) => (
+          <Link key={product._id} href={`/productlist/${product._id}`}>
+            <div className="w-full sm:w-1/2 lg:w-[320px] flex justify-center"> {/* Increased width to 320px */}
+              <div className="relative w-[320px] h-[462px]"> {/* Increased width to 320px */}
+                <Image
+                  src={product.imageUrl}
+                  alt={product.name}
+                  fill
+                  className="object-cover rounded-lg"
+                />
+              </div>
+            </div>
+          </Link>
+        ))}
       </div>
+
       {/* Button */}
-      <div className=" flex justify-center mt-6">
+      <Link href={"/productlist"}>
+      <div className="flex justify-center mt-6">
         <button className="bg-[#F9F9F9] px-6 py-3 text-lg rounded hover:bg-gray-200">
           View Collection
         </button>
       </div>
+      </Link>
+    </div>
+  );
+};
 
-
-  {/* Popular Products Section */}
-  <div className="w-full bg-[#ffffff] py-16 mt-16">
-        {/* Heading */}
-        <h1 className="ml-10 font-[Clash Display] font-normal text-3xl lg:text-4xl text-[#2A254B] mb-20">
-          Our Popular Products
-        </h1>
-
-        {/* Images Section in one row */}
-        <div className="flex flex-row gap-8 justify-center mt-8">
-          <div className="w-full sm:w-1/2 lg:w-[620px]">
-            <Image
-              src="/images/parent4.png"
-              alt="Popular Product 1"
-              width={620}
-              height={462}
-              className="object-cover"
-            />
-          </div>
-          <div className="w-full sm:w-1/2 lg:w-[305px]">
-            <Image
-              src="/images/parent5.png"
-              alt="Popular Product 2"
-              width={305}
-              height={462}
-              className="object-cover"
-            />
-          </div>
-          <div className="w-full sm:w-1/2 lg:w-[305px]">
-            <Image
-              src="/images/parent6.png"
-              alt="Popular Product 3"
-              width={305}
-              height={462}
-              className="object-cover"
-            />
-          </div>
-        </div>
-
-        {/* Button */}
-        <div className="flex justify-center mt-8">
-          <button className="bg-[#F9F9F9] px-6 py-3 text-lg rounded hover:bg-gray-200">
-            View Collection
-          </button>
-        </div>
-      </div>
-
-
-
-
-
-</div>
-    );
-  };
-  
-  export default Ceremics;
+export default ChairsPage;
