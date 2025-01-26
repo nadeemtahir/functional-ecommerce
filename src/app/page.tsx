@@ -6,6 +6,7 @@ import Desktop from "./components/desktop";
 import Footer from "./components/footer";
 import Herosection from "./components/hero";
 import Navbar from "./components/navbar";
+import Popular from "./components/popular";
 
 
 export default function Home() {
@@ -18,6 +19,7 @@ export default function Home() {
     <Herosection/>
     <Brand/>
     <Ceramics/>
+    <Popular/>
     <Club/>
     <Desktop/>
     <Footer/>
