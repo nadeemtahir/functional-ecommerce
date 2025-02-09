@@ -51,6 +51,11 @@ const Checkout = () => {
     console.log("🛒 Cart Items before submitting:", cartItems);
     
     try {
+      // Validate cart items
+      if (cartItems.length === 0) {
+        throw new Error("Cart is empty");
+      }
+
       const order = await client.create({
         _type: "order",
         customerName: formData.name,
@@ -62,10 +67,8 @@ const Checkout = () => {
         paymentMethod: formData.paymentMethod,
         orderStatus: "pending",
         createdAt: new Date().toISOString(),
-  
         items: cartItems.map((item: CartItem) => ({
-          
-          productId: item.id?.toString() || "unknown", // ✅ Prevents null issue
+          productId: item.id?.toString() || "unknown", // Prevents null issue
           name: item.name,
           quantity: item.quantity,
           price: item.price,
@@ -81,7 +84,6 @@ const Checkout = () => {
   
     setShowModal(true);
   };
-  
   
   return (
     <div>
