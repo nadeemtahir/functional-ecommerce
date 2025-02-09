@@ -122,7 +122,7 @@ const Checkout = () => {
                   type={key === "email" ? "email" : "text"}
                   name={key}
                   placeholder={key.charAt(0).toUpperCase() + key.slice(1)}
-                  value={formData[key]}
+                  value={formData[key as keyof FormData]}
                   onChange={handleChange}
                   className="w-full p-3 border rounded-lg"
                   required
