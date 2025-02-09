@@ -56,7 +56,6 @@ const Checkout = () => {
     }
 
     setLoading(true);
-    console.log("🛒 Cart Items before submitting:", cartItems);
 
     try {
       const order = await client.create({
@@ -79,11 +78,9 @@ const Checkout = () => {
         })),
       });
 
-      console.log("✅ Order stored in Sanity:", order);
       setModalMessage("🎉 Order Placed Successfully!");
       setTimeout(() => router.push("/success"), 2000);
-    } catch (error: any) {
-      console.error("❌ Order Submission Failed:", error);
+    } catch (error) {
       setModalMessage("❌ Order Submission Failed. Please Try Again.");
     } finally {
       setShowModal(true);
@@ -92,11 +89,10 @@ const Checkout = () => {
   };
 
   return (
-    <div>
+    <div className="bg-gray-50 min-h-screen">
       <Navbar setShowCart={() => {}} />
-      <div className="min-h-screen bg-gray-50 p-10 flex gap-10 justify-center">
-        {/* 🛒 Order Summary */}
-        <div className="w-2/5 bg-white shadow-lg p-6 rounded-lg">
+      <div className="max-w-6xl mx-auto p-6 flex flex-wrap gap-6 justify-center">
+        <div className="w-full md:w-2/5 bg-white shadow-lg p-6 rounded-lg">
           <h2 className="text-2xl font-bold mb-4">Order Summary</h2>
           {cartItems.length > 0 ? (
             <div className="space-y-4">
@@ -116,36 +112,40 @@ const Checkout = () => {
           )}
         </div>
 
-        {/* 📝 Billing Form */}
-        <div className="w-2/5 bg-white shadow-lg p-6 rounded-lg">
+        <div className="w-full md:w-2/5 bg-white shadow-lg p-6 rounded-lg">
           <h2 className="text-2xl font-bold mb-4">Billing Details</h2>
           <form onSubmit={handleSubmit} className="space-y-4">
-            <input type="text" name="name" placeholder="Full Name" value={formData.name} onChange={handleChange} className="w-full p-3 border rounded-lg" required />
-            <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} className="w-full p-3 border rounded-lg" required />
-            <input type="text" name="phone" placeholder="Phone Number" value={formData.phone} onChange={handleChange} className="w-full p-3 border rounded-lg" required />
-            <input type="text" name="address" placeholder="Address" value={formData.address} onChange={handleChange} className="w-full p-3 border rounded-lg" required />
-            <div className="flex gap-4">
-              <input type="text" name="city" placeholder="City" value={formData.city} onChange={handleChange} className="w-1/2 p-3 border rounded-lg" required />
-              <input type="text" name="zip" placeholder="Zip Code" value={formData.zip} onChange={handleChange} className="w-1/2 p-3 border rounded-lg" required />
-            </div>
+            {Object.keys(formData).map((key) => (
+              key !== "paymentMethod" ? (
+                <input
+                  key={key}
+                  type={key === "email" ? "email" : "text"}
+                  name={key}
+                  placeholder={key.charAt(0).toUpperCase() + key.slice(1)}
+                  value={formData[key]}
+                  onChange={handleChange}
+                  className="w-full p-3 border rounded-lg"
+                  required
+                />
+              ) : null
+            ))}
             <select name="paymentMethod" value={formData.paymentMethod} onChange={handleChange} className="w-full p-3 border rounded-lg">
               <option value="Credit Card">Credit Card</option>
               <option value="PayPal">PayPal</option>
               <option value="Bank Transfer">Bank Transfer</option>
             </select>
-            <button type="submit" disabled={loading} className="w-full bg-[#2A254B] text-white py-3 rounded-lg hover:bg-[#1f1b3a]">
+            <button type="submit" disabled={loading} className="w-full bg-[#2A254B] text-white py-3 rounded-lg hover:bg-[#1f1b3a] transition">
               {loading ? "Processing..." : "Place Order"}
             </button>
           </form>
         </div>
       </div>
 
-      {/* ✅ Modal */}
       {showModal && (
         <motion.div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-          <div className="bg-white p-8 rounded-lg text-center shadow-lg">
+          <div className="bg-white p-8 rounded-lg text-center shadow-lg max-w-md w-full">
             <h2 className="text-xl font-bold mb-4">{modalMessage}</h2>
-            <button onClick={() => setShowModal(false)} className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+            <button onClick={() => setShowModal(false)} className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
               OK
             </button>
           </div>
