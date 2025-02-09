@@ -49,13 +49,8 @@ const Checkout = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log("🛒 Cart Items before submitting:", cartItems);
-    
-    try {
-      // Validate cart items
-      if (cartItems.length === 0) {
-        throw new Error("Cart is empty");
-      }
 
+    try {
       const order = await client.create({
         _type: "order",
         customerName: formData.name,
@@ -68,23 +63,24 @@ const Checkout = () => {
         orderStatus: "pending",
         createdAt: new Date().toISOString(),
         items: cartItems.map((item: CartItem) => ({
-          productId: item.id?.toString() || "unknown", // Prevents null issue
+          _type: "orderItem", // ✅ Ensure this matches your Sanity schema
+          productId: item.id?.toString() || "unknown",
           name: item.name,
           quantity: item.quantity,
           price: item.price,
         })),
       });
-  
+
       console.log("✅ Order stored in Sanity:", order);
       setModalMessage("🎉 Order Placed Successfully!");
     } catch (error: any) {
       console.error("❌ Sanity Order Submission Error:", error.response || error.message);
       setModalMessage("❌ Order Submission Failed. Please Try Again.");
     }
-  
+
     setShowModal(true);
   };
-  
+
   return (
     <div>
       <Navbar setShowCart={() => {}} />
