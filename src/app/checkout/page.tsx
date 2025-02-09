@@ -81,7 +81,7 @@ const Checkout = () => {
 
       console.log("✅ Order stored in Sanity:", order);
       setModalMessage("🎉 Order Placed Successfully!");
-      setTimeout(() => router.push("/order-success"), 2000);
+      setTimeout(() => router.push("/success"), 2000);
     } catch (error: any) {
       console.error("❌ Order Submission Failed:", error);
       setModalMessage("❌ Order Submission Failed. Please Try Again.");
